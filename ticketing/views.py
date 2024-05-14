@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 from .forms import checkinform, checkoutform
 from .models import Passenger, State, Destination
-from .serializers import stateSerializer, destinationSerializer, passengerSerializer, paymentSerializer
+from .serializers import stateSerializer, destinationSerializer, passengerSerializer, paymentSerializer, FingerprintSerializer, paymentconfirmSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -31,12 +31,12 @@ class destinationView(APIView):
             'data':serializer.data,
             'status':status.HTTP_200_OK
         })
-
-class PassengerView(APIView):
-    def post(self, request):
+    
+class FingerprintView(APIView):
+    def post(self,request):
         data = request.data
 
-        serializer = passengerSerializer(data = data)
+        serializer = FingerprintSerializer(data = data)
 
         if serializer.is_valid():
             serializer.save()
@@ -49,6 +49,48 @@ class PassengerView(APIView):
                 'data':serializer.errors,
                 'status':status.HTTP_400_BAD_REQUEST
             })
+
+class PassengerView(APIView):
+    def put(self, request):
+
+        data = request.data
+
+        passenger = Passenger.objects.last()
+        if passenger is None:
+            return Response({
+                'message':'user doesn\'t exist',
+                'status':status.HTTP_400_BAD_REQUEST
+            })
+        else:
+            serializer = passengerSerializer(instance = passenger, data = data)
+            # if (passenger.amt_paid-passenger.fare)>=0:
+            #     passenger.paid = True
+            #     passenger.save()
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                'data':serializer.data,
+                'status':status.HTTP_202_ACCEPTED
+                })
+class PaymentView(APIView):
+    # def post(self, request):
+    #     data = request.data
+
+    #     serializer = passengerSerializer(data = data)
+
+    #     passenger = Passenger.objects.last()
+        
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response({
+    #             'data':serializer.data,
+    #             'status':status.HTTP_201_CREATED
+    #         })
+    #     else:
+    #         return Response({
+    #             'data':serializer.errors,
+    #             'status':status.HTTP_400_BAD_REQUEST
+    #         })
     
     def put(self, request):
 
@@ -64,8 +106,11 @@ class PassengerView(APIView):
         
         else:
             serializer = paymentSerializer(instance = passenger, data = data)
-            if (passenger.amt_paid-passenger.fare)>=0:
+            if (passenger.amt_paid-passenger.fare)>0 or (passenger.amt_paid-passenger.fare)==0:
                 passenger.paid = True
+                passenger.save()
+            elif (passenger.amt_paid-passenger.fare)<0:
+                passenger.paid=False
                 passenger.save()
             if serializer.is_valid():
                 serializer.save()
@@ -75,11 +120,10 @@ class PassengerView(APIView):
                 })
 
 class CheckoutView(APIView):
-    def put(self, request):
+    def get(self, request):
 
-        data = request.data
         fingerprint = request.data.get('fingerprint')
-
+        
         passenger = Passenger.objects.get(fingerprint = fingerprint)
         if passenger is None:
             return Response({
@@ -99,46 +143,3 @@ class CheckoutView(APIView):
                 'status':status.HTTP_402_PAYMENT_REQUIRED
                 })
 
-
-# def Checkin(request):
-#     form = checkinform()
-#     if request.method=='POST':
-        
-#         # context = {'form':form}
-#         form = checkinform(request.POST)
-#         if form.is_valid():
-#             passenger = form.save(commit=True)
-#             passenger.save()
-#             return redirect('checkin')
-
-        
-        # passenger = Passenger.objects.create(
-        #     destination = destination,
-        #     fare = fare
-        # )
-        # passenger.save()
-    
-        
-    # return render(request, 'ticketing/checkin.html', {'form':form})
-
-# def Checkout(request):
-#     form = checkoutform()
-    
-#     if request.method=='POST':
-#         fingerprint = request.POST.get('fingerprint')
-
-#         passenger = Passenger.objects.get(fingerprint = fingerprint)
-    
-#         if passenger.paid and (int(passenger.fare-passenger.amt_paid)==0):
-#             return redirect('checkout-success')
-#         else:
-#             return redirect('checkout-fail')
-    
-#     return render(request, 'ticketing/checkout.html', {'form':form})
-
-# def CheckoutSuccess(request):
-#     return render(request, 'ticketing/checkoutSuccess.html')
-
-
-# def CheckoutFail(request):
-#     return render(request, 'ticketing/checkoutfail.html')

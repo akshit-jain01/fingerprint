@@ -15,12 +15,17 @@ class destinationSerializer(serializers.ModelSerializer):
         model = Destination
         fields = ['id','name','state']
 
+class FingerprintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Passenger
+        fields = ['fingerprint']
+
 
 class passengerSerializer(serializers.ModelSerializer):
     destination = SlugRelatedField(slug_field='name', queryset=Destination.objects.all())
     class Meta:
         model = Passenger
-        fields = ['fingerprint', 'destination','fare']
+        fields = ['destination','fare']
 
 
 class paymentSerializer(serializers.ModelSerializer):
@@ -29,7 +34,7 @@ class paymentSerializer(serializers.ModelSerializer):
         fields = ['fingerprint','amt_paid']
 
 
-# class paymentconfirmSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Passenger
-#         fields = ['fingerprint','paid']
+class paymentconfirmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Passenger
+        fields = ['fingerprint']

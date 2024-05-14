@@ -23,13 +23,16 @@ class Destination(models.Model):
 
 
 class Passenger(models.Model):
-    destination = models.ForeignKey(Destination, on_delete = models.CASCADE)
-    fare = models.IntegerField(default = 0)
-    fingerprint = models.CharField(max_length = 200)
-    paid = models.BooleanField(default = False)
-    amt_paid = models.IntegerField(default = 0)
+    destination = models.ForeignKey(Destination, on_delete = models.CASCADE, null=True)
+    fare = models.IntegerField(default = 0, blank=True)
+    fingerprint = models.CharField(max_length = 200, blank=True)
+    paid = models.BooleanField(default = False, blank=True)
+    amt_paid = models.IntegerField(default = 0, blank=True)
 
     def __str__(self):
-        return self.destination.name
+        if self.destination != None:
+            return self.destination.name
+        else:
+            return self.fingerprint
     
 
