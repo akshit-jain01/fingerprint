@@ -133,6 +133,7 @@ class CheckoutView(APIView):
         
         else:
             if passenger.paid == True:
+                passenger.delete()
                 return Response({
                 'message':"Thank You for riding in this bus",
                 'status':status.HTTP_202_ACCEPTED
