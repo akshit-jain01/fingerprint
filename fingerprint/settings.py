@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['*']
 
 PYTHON_VERSION = config('PYTHON_VERSION')
 
+STRIPE_SECRET = config('STRIPE_SECRET')
+
 
 # Application definition
 
