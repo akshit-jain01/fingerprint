@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-import stripe
 from django.conf import settings
 
 from .forms import checkinform, checkoutform
@@ -149,22 +148,4 @@ class CheckoutView(APIView):
                 'status':status.HTTP_402_PAYMENT_REQUIRED
                 })
 
-# class SecretView(APIView):
-#     def put(self, request):
-#         stripe.api_key = settings.STRIPE_SECRET
-
-#         fingerprint = request.data.get('fingerprint')
-#         passenger = Passenger.objects.get(fingerprint = fingerprint)
-#         total = passenger.fare
-
-#         stripe_total = int(total*100)
-
-#         intent = stripe.PaymentIntent.create(
-#             amount=stripe_total,
-#             currency="inr",
-#             automatic_payment_methods={"enabled": True},
-#         )
-#         return Response(data={
-#             'client_secret': intent.client_secret
-#         }, status=status.HTTP_201_CREATED)
         
