@@ -51,7 +51,7 @@ class FingerprintView(APIView):
             })
 
 class PassengerView(APIView):
-    def put(self, request):
+    def post(self, request):
 
         data = request.data
 
@@ -63,9 +63,6 @@ class PassengerView(APIView):
             })
         else:
             serializer = passengerSerializer(instance = passenger, data = data)
-            # if (passenger.amt_paid-passenger.fare)>=0:
-            #     passenger.paid = True
-            #     passenger.save()
             if serializer.is_valid():
                 serializer.save()
                 return Response({
