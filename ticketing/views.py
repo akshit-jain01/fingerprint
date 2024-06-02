@@ -9,6 +9,8 @@ from .serializers import stateSerializer, destinationSerializer, passengerSerial
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import logging 
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 class stateView(APIView):
@@ -53,7 +55,9 @@ class FingerprintView(APIView):
 class PassengerView(APIView):
     def post(self, request):
 
+        
         data = request.data
+        logger.debug(f"Request data: {request.data}")
 
         passenger = Passenger.objects.last()
         if passenger is None:

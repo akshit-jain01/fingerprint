@@ -34,6 +34,7 @@ PYTHON_VERSION = config('PYTHON_VERSION')
 STRIPE_SECRET = config('STRIPE_SECRET')
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'ticketing',
     'rest_framework'
 ]
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,6 +87,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fingerprint.wsgi.application'
+
+CORS_ALLOW_ALL_ORIGINS = True 
 
 
 # Database
